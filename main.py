@@ -25,7 +25,7 @@ def winn_whitaker_elliott_phillips(L,y):
     s=[-0.024501,-0.0368073,0.0210892,0.00281557]
     b=[6.90390,2.77650,-1.909,0.25599]
     return 1
-def unifiedFormula(L,a,y,y0,e):
+def unified_formula(L,a,y,y0,e):
     #return stanley_davies(L*number_of_eyes(e),a) + ageEffect(L,a,y,y0,e)
     F = L*a*number_of_eyes(e)
     D_sd = stanley_davies(F,1)
@@ -70,6 +70,6 @@ plt.plot(L,stanley_davies(L,25.4),color=(0.6,0.10,0.6),label="StanleyDavies")
 plt.plot(L,barten(L,10),color=(0.4,0.6,0.2),label="Barten")
 plt.plot(L,blackie_howland(L),color=(0.6,0.10,0.6),label="BlackieHowland")
 #plt.plot(L,winn_whitaker_elliott_phillips(L,25),color=(0.6,0.10,0.6))
-plt.plot(L,unifiedFormula(L,a,y,y0,e),dashes=[10,10],color=(0,0,0),label="Unified")
+plt.plot(L,unified_formula(L,a,y,y0,e),dashes=[10,10],color=(0,0,0),label="Unified")
 plt.legend(loc='upper right')
 plt.show()
