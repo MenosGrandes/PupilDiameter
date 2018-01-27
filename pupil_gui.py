@@ -55,8 +55,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self._dynamic_ax.plot(t, np.sin(t + time.time()))
         self._dynamic_ax.figure.canvas.draw()
 
-
-if __name__ == "__main__":
+def show_GUI():
     qapp = QtWidgets.QApplication(sys.argv)
     app = ApplicationWindow()
     app.show()
