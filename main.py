@@ -6,7 +6,7 @@ pupil = PupilDiameter_calculation(L=np.arange(0.0001,np.power(10,4),0.01),
                                   y=30,
                                   y0=28.58,
                                   e=2)
-show_GUI()
+show_GUI(pupil)
 
 
 

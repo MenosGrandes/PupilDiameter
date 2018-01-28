@@ -27,7 +27,7 @@ from matplotlib.figure import Figure
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 class ApplicationWindow(QtWidgets.QMainWindow):
-    def __init__(self):
+    def __init__(self,pupil):
         super(ApplicationWindow, self).__init__()
         self._main = QtWidgets.QWidget()
         self.setCentralWidget(self._main)
@@ -85,22 +85,58 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.eyes_layout.addWidget(self.eyes_one_radio_button)
         self.eyes_layout.addWidget(self.eyes_two_radio_button) 
         self.layout.addLayout(self.eyes_layout)
-        
+        self.eyes_one_radio_button.toggled.connect(lambda:self.eyes_OnValueChanged(self.eyes_one_radio_button))
+        self.eyes_two_radio_button.toggled.connect(lambda:self.eyes_OnValueChanged(self.eyes_two_radio_button))
         ''' Range of luminance'''
-        #self.addSlider(minimum=0.1,maximum=60,defaultValue=10,textSlider="Field diameter (deg)",parentLayout=layout)
-        #self.addSlider(minimum=20,maximum=83,defaultValue=25,textSlider="Age (years)",parentLayout=layout,tickInterval=1)
+        self.range_luminance_layout = QFormLayout()
+        self.range_luminance_cb_min = QSpinBox()
+        self.range_luminance_cb_min.setMinimum(-6)
+        self.range_luminance_cb_min.setMaximum(-1)
+        self.range_luminance_cb_max = QSpinBox()
+        self.range_luminance_cb_max.setMinimum(1)
+        self.range_luminance_cb_max.setMaximum(10)
+        self.range_luminance_layout.addRow((QLabel("Minimum (log cd m-2)")),self.range_luminance_cb_min)
+        self.range_luminance_layout.addRow((QLabel("Maximum (log cd m-2)")),self.range_luminance_cb_max)
+        self.layout.addLayout(self.range_luminance_layout)
+        self.range_luminance_cb_max.valueChanged.connect(self.range_luminance_max_OnValueChanged)
+        self.range_luminance_cb_min.valueChanged.connect(self.range_luminance_min_OnValueChanged)
+
+
+
         self.addToolBar(NavigationToolbar(static_canvas, self))
         self._static_ax = static_canvas.figure.subplots()
         t = np.linspace(0, 10, 501)
-        self._static_ax.plot(t, np.tan(t), ".")
+        self.updatePlot(pupil)
 
 
     def age_onValueChanged(self):
         self.age_value_label.setText(str(self.age_slider.value()))
     def field_diameter_OnValueChanged(self):
         self.field_diameter_value_label.setText(str(self.field_diameter_slider.value()))
-def show_GUI():
+    def eyes_OnValueChanged(self,button):
+        print (int(button.text()))
+    def range_luminance_min_OnValueChanged(self):
+        print "Min value of luminance range changed to" +str(self.range_luminance_cb_min.value())
+    def range_luminance_max_OnValueChanged(self):
+         print "Max value of luminance range changed to" +str(self.range_luminance_cb_max.value())
+    def updatePlot(self,pupil_diameter_logic__):
+        self._static_ax.plot(pupil_diameter_logic__.L,pupil_diameter_logic__.holladay(),color="blue")
+
+        #plt.plot(L,crawford(L),color="green",label="Crowford")
+        #plt.plot(L,moon_spancer(L),color="yellow",label="Moon Spancer")
+        #plt.plot(L,deGroot_gebhard(L),color="red",label="DeGrootGebhard")
+        #plt.plot(L,stanley_davies(L,25.4),color=(0.6,0.10,0.6),label="StanleyDavies")
+        #plt.plot(L,barten(L,10),color=(0.4,0.6,0.2),label="Barten")
+        #plt.plot(L,blackie_howland(L),color=(0.6,0.10,0.6),label="BlackieHowland")
+        #plt.plot(L,winn_whitaker_elliott_phillips(L,25),color=(0.6,0.10,0.6))
+        #plt.plot(L,unified_formula(L,a,y,y0,e),dashes=[10,10],color=(0,0,0),label="Unified")
+        #plt.legend(loc='upper right')
+        #plt.show()
+        
+        l
+    
+def show_GUI(pupil):
     qapp = QtWidgets.QApplication(sys.argv)
-    app = ApplicationWindow()
+    app = ApplicationWindow(pupil)
     app.show()
     qapp.exec_()
