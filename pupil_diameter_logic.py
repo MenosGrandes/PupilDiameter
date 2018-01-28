@@ -30,13 +30,7 @@ class PupilDiameter_calculation:
     def barten():
         return 5 - 3 * np.tanh(0.4*np.log10((L*a)/np.power(40,2)))
     def blackie_howland():
-        return 5.697 -0.658*np.log10(L)+0.07*np.power(np.log10(L),2)
-    def winn_whitaker_elliott_phillips():
-        Ws = 0
-        Wl = 0
-        s=[-0.024501,-0.0368073,0.0210892,0.00281557]
-        b=[6.90390,2.77650,-1.909,0.25599]
-        return 1
+        return 5.697 -0.658*np.log10(L)+0.07*np.power(np.log10(L),2) 
     def unified_formula():
         #return stanley_davies(L*number_of_eyes(e),a) + ageEffect(L,a,y,y0,e)
         F = L*a*number_of_eyes(e)
