@@ -17,34 +17,33 @@ class PupilDiameter_calculation:
        self.y  = y
        self.y0 = y0
        self.e  = e
-    def holladay():
-        return 7*np.exp(-0.1007*np.power(L,0.4))
-    def crawford():
-        return 5- 2.2*np.tanh(0.61151 +0.447*np.log10(L))
-    def moon_spancer():
-        return 4.9 -3* np.tanh(0.4*np.log10(L))
-    def deGroot_gebhard():
-        return 7.175*np.exp(-0.00092*np.power(7.597 + np.log10(L),3))
-    def stanley_davies():
-        return 7.75-5.75*(np.power(((L*a)/846),(0.41))/(np.power(((L*a)/846),(0.41))+2))
-    def barten():
-        return 5 - 3 * np.tanh(0.4*np.log10((L*a)/np.power(40,2)))
-    def blackie_howland():
-        return 5.697 -0.658*np.log10(L)+0.07*np.power(np.log10(L),2) 
-    def unified_formula():
+    def holladay(self):
+        return 7*np.exp(-0.1007*np.power(self.L,0.4))
+    def crawfor(self):
+        return 5- 2.2*np.tanh(0.61151 +0.447*np.log10(self.L))
+    def moon_spancer(self):
+        return 4.9 -3* np.tanh(0.4*np.log10(self.L))
+    def deGroot_gebhard(self):
+        return 7.175*np.exp(-0.00092*np.power(7.597 + np.log10(self.L),3))
+    def stanley_davies(self):
+        return 7.75-5.75*(np.power(((self.L*self.a)/846),(0.41))/(np.power(((self.L*self.a)/846),(0.41))+2))
+    def barten(self):
+        return 5 - 3 * np.tanh(0.4*np.log10((self.L*self.a)/np.power(40,2)))
+    def blackie_howland(self):
+        return 5.697 -0.658*np.log10(self.L)+0.07*np.power(np.log10(self.L),2) 
+    def unified_formula(self):
         #return stanley_davies(L*number_of_eyes(e),a) + ageEffect(L,a,y,y0,e)
-        F = L*a*number_of_eyes(e)
-        D_sd = stanley_davies(F,1)
-        return D_sd + (y-y0)*(0.02132 - 0.009562*D_sd)
+        F = self.L*self.a*self.number_of_eyes()
+        D_sd = self.stanley_davies()
+        return D_sd + (self.y-self.y0)*(0.02132 - 0.009562*D_sd)
     ''' Helper functions'''
-    def number_of_eyes():
-        if   e == 1: return 0.1
-        elif e == 2: return 1
-    def ageSplop_unified():
-        return 0.021323 - 0.0095623*stanley_davies(L*number_of_eyes(e),a)
-    def ageEffect_unified():
-        if 20<=y<=83:
-            return (y-y0)*ageSplop_unified(L,a,e)
+    def number_of_eyes(self):
+        if   self.e == 1: return 0.1
+        elif self.e == 2: return 1
+    def ageSplop_unified(self):
+        return 0.021323 - 0.0095623*stanley_davies()
+    def ageEffect_unified(self):
+        if 20<=self.y<=83:
+            return (self.y-self.y0)*self.ageSplop_unified(self.L,self.a,self.e)
         else:
             print "Wrong y range. It must be between 20 and 83"
-
