@@ -9,8 +9,6 @@ e - quantity of eyes used in survey, <int> 1 or 2
     '''
 class PupilDiameter_calculation:
     ''' Methods'''
-    def __init__(self):
-        self.e = 100
     def __init__(self,L,a,y,y0,e):
        self.L  = L
        self.a  = a

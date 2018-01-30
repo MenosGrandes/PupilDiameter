@@ -81,7 +81,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.eyes_one_radio_button = QRadioButton("1")
         self.eyes_two_radio_button = QRadioButton("2")
         self.eyes_one_radio_button.setChecked(True)
-        pupil.e=1;
+     #   pupil.e=1;
         self.eyes_layout.addWidget(self.eyes_label)
         self.eyes_layout.addWidget(self.eyes_one_radio_button)
         self.eyes_layout.addWidget(self.eyes_two_radio_button) 
@@ -98,7 +98,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.range_luminance_cb_max.setMinimum(1)
         self.range_luminance_cb_max.setMaximum(10)
         self.range_luminance_cb_max.setValue(1)
-        self.pupil.L =np.arange(10**self.range_luminance_cb_min.value(),np.power(10,self.range_luminance_cb_max.value()),0.01)
+    #    self.pupil.L =np.arange(10**self.range_luminance_cb_min.value(),np.power(10,self.range_luminance_cb_max.value()),0.01)
         self.range_luminance_layout.addRow((QLabel("Minimum (log cd m-2)")),self.range_luminance_cb_min)
         self.range_luminance_layout.addRow((QLabel("Maximum (log cd m-2)")),self.range_luminance_cb_max)
         self.layout.addLayout(self.range_luminance_layout)
@@ -114,29 +114,29 @@ class ApplicationWindow(QtWidgets.QMainWindow):
 
     def age_onValueChanged(self):
         self.age_value_label.setText(str(self.age_slider.value()))
-        self.pupil.y=self.age_slider.value()
+        #self.pupil.y=self.age_slider.value()
         self.updatePlot()
     def field_diameter_OnValueChanged(self):
         self.field_diameter_value_label.setText(str(self.field_diameter_slider.value()))
-        self.pupil.a=self.field_diameter_slider.value()
+        #self.pupil.a=self.field_diameter_slider.value()
         self.updatePlot()
     def eyes_OnValueChanged(self,button):
-        self.pupil.e = (int(button.text())) 
+        #self.pupil.e = (int(button.text())) 
         self.updatePlot()
     def range_luminance_OnValueChanged(self):
-        self.pupil.L =np.arange(10**self.range_luminance_cb_min.value(),np.power(10,self.range_luminance_cb_max.value()),0.01)
+        #self.pupil.L =np.arange(10**self.range_luminance_cb_min.value(),np.power(10,self.range_luminance_cb_max.value()),0.01)
         self.updatePlot()
     def updatePlot(self):
-        self._static_ax.plot(self.pupil.L,self.pupil.holladay(),color="blue",label="Crowford")
-        self._static_ax.plot(self.pupil.L,self.pupil.moon_spancer(),color="blue",label="Moon Spancer")
-        self._static_ax.plot(self.pupil.L,self.pupil.deGroot_gebhard(),color="blue",label="DeGroot Gebhard")
-        self._static_ax.plot(self.pupil.L,self.pupil.stanley_davies(),color="blue",label="Stanley Davies")
-        self._static_ax.plot(self.pupil.L,self.pupil.barten(),color="blue",label="Barten")
-        self._static_ax.plot(self.pupil.L,self.pupil.blackie_howland(),color="blue",label="Blackie Howland")
-#        self._static_ax.plot(self.pupil.L,self.pupil.winn_whitaker_elliott_phillips(),color="blue")
-        self._static_ax.plot(self.pupil.L,self.pupil.unified_formula(),color="blue",label="Unified")
+        self._static_ax.plot(self.pupil.L,self.pupil.holladay(),color=(1,0,0),label="Holloday")
+        self._static_ax.plot(self.pupil.L,self.pupil.moon_spancer(),color=(0,1,0),label="Moon Spancer")
+        self._static_ax.plot(self.pupil.L,self.pupil.deGroot_gebhard(),color=(0,0,1),label="DeGroot Gebhard")
+        self._static_ax.plot(self.pupil.L,self.pupil.stanley_davies(),color=(1,1,0),label="Stanley Davies")
+        self._static_ax.plot(self.pupil.L,self.pupil.barten(),color=(0,1,1),label="Barten")
+        self._static_ax.plot(self.pupil.L,self.pupil.blackie_howland(),color=(0.5,0.5,0),label="Blackie Howland")
+       # self._static_ax.plot(self.pupil.L,self.pupil.winn_whitaker_elliott_phillips(),color="blue")
+        self._static_ax.plot(self.pupil.L,self.pupil.unified_formula(),color=(0,0,0),linestyle='--',label="Unified")
         self._static_ax.legend(loc="upper right")
-
+    #    self._static_ax.set_xticks([0.0001,0.01,1,100,10000],minor=True)
 
 
 
