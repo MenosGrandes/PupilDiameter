@@ -1,7 +1,7 @@
 from pupil_diameter_logic import *
 from pupil_gui import *
 
-pupil = PupilDiameter_calculation(L=np.arange(0.0001,1,0.01),
+pupil = PupilDiameter_calculation(L=np.arange(10**-4,10**4,0.01),
                                   a=60,
                                   y=30,
                                   y0=28.58,

@@ -17,7 +17,7 @@ class PupilDiameter_calculation:
        self.e  = e
     def holladay(self):
         return 7*np.exp(-0.1007*np.power(self.L,0.4))
-    def crawfor(self):
+    def crawford(self):
         return 5- 2.2*np.tanh(0.61151 +0.447*np.log10(self.L))
     def moon_spancer(self):
         return 4.9 -3* np.tanh(0.4*np.log10(self.L))

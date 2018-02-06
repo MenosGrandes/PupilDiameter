@@ -13,7 +13,7 @@ import sys
 import time
 
 import numpy as np
-
+import matplotlib.ticker as ticker
 from matplotlib.backends.qt_compat import QtCore, QtWidgets, is_pyqt5
 if is_pyqt5():
     from matplotlib.backends.backend_qt5agg import (
@@ -127,19 +127,20 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         #self.pupil.L =np.arange(10**self.range_luminance_cb_min.value(),np.power(10,self.range_luminance_cb_max.value()),0.01)
         self.updatePlot()
     def updatePlot(self):
-        self._static_ax.plot(self.pupil.L,self.pupil.holladay(),color=(1,0,0),label="Holloday")
-        self._static_ax.plot(self.pupil.L,self.pupil.moon_spancer(),color=(0,1,0),label="Moon Spancer")
-        self._static_ax.plot(self.pupil.L,self.pupil.deGroot_gebhard(),color=(0,0,1),label="DeGroot Gebhard")
-        self._static_ax.plot(self.pupil.L,self.pupil.stanley_davies(),color=(1,1,0),label="Stanley Davies")
-        self._static_ax.plot(self.pupil.L,self.pupil.barten(),color=(0,1,1),label="Barten")
-        self._static_ax.plot(self.pupil.L,self.pupil.blackie_howland(),color=(0.5,0.5,0),label="Blackie Howland")
+        #self._static_ax.plot(self.pupil.L,self.pupil.holladay(),color=(1,0,0),label="Holloday")
+        #self._static_ax.plot(self.pupil.L,self.pupil.moon_spancer(),color=(0,1,0),label="Moon Spancer")
+        #self._static_ax.plot(self.pupil.L,self.pupil.deGroot_gebhard(),color=(0,0,1),label="DeGroot Gebhard")
+        #self._static_ax.plot(self.pupil.L,self.pupil.stanley_davies(),color=(1,1,0),label="Stanley Davies")
+        #self._static_ax.plot(self.pupil.L,self.pupil.barten(),color=(0,1,1),label="Barten")
+        #self._static_ax.plot(self.pupil.L,self.pupil.blackie_howland(),color=(0.5,0.5,0),label="Blackie Howland")
        # self._static_ax.plot(self.pupil.L,self.pupil.winn_whitaker_elliott_phillips(),color="blue")
-        self._static_ax.plot(self.pupil.L,self.pupil.unified_formula(),color=(0,0,0),linestyle='--',label="Unified")
+        #self._static_ax.plot(self.pupil.L,self.pupil.unified_formula(),color=(0,0,0),linestyle='--',label="Unified")
+        self._static_ax.plot(self.pupil.L,self.pupil.crawford(),color=(0.5,0.7,0.3),label="Crawford")
         self._static_ax.legend(loc="upper right")
-    #    self._static_ax.set_xticks([0.0001,0.01,1,100,10000],minor=True)
-
-
-
+        #self._static_ax.set_xticks([0.0001,0.01,1,100,10000],minor=True)
+        self._static_ax.set_xscale('log')
+        self._static_ax.xaxis.set_major_locator(ticker.LogLocator(base=10,numticks=4))
+        self._static_ax.set_ylim(ymax=10)
 
 
 
