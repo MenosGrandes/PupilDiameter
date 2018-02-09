@@ -27,13 +27,15 @@ from matplotlib.figure import Figure
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 class ApplicationWindow(QtWidgets.QMainWindow):
-    def __init__(self,pupil):
+    def __init__(self,pupil,luminance_range):
         super(ApplicationWindow, self).__init__()
         self._main = QtWidgets.QWidget()
         self.setCentralWidget(self._main)
+        self.resize(800,800)
         self.layout = QtWidgets.QVBoxLayout(self._main)
         self.pupil = pupil
-        static_canvas = FigureCanvas(Figure(figsize=(6, 4)))
+        self.luminance_range=luminance_range
+        static_canvas = FigureCanvas(Figure(figsize=(6.5, 5)))
         self.layout.addWidget(static_canvas)
         ''' Field Diameter Slider'''
         self.field_diameter_layout = QtWidgets.QHBoxLayout()
@@ -110,55 +112,43 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.addToolBar(NavigationToolbar(static_canvas, self))
         self._static_ax = static_canvas.figure.subplots()
         self.updatePlot()
-
-
     def age_onValueChanged(self):
         self.age_value_label.setText(str(self.age_slider.value()))
-        #self.pupil.y=self.age_slider.value()
+        self.pupil.y=self.age_slider.value()
         self.updatePlot()
     def field_diameter_OnValueChanged(self):
         self.field_diameter_value_label.setText(str(self.field_diameter_slider.value()))
-        #self.pupil.a=self.field_diameter_slider.value()
+        self.pupil.a=self.field_diameter_slider.value()
         self.updatePlot()
+        print ("field diameter = " + str(self.pupil.a))
     def eyes_OnValueChanged(self,button):
-        #self.pupil.e = (int(button.text())) 
+        self.pupil.e = (int(button.text())) 
         self.updatePlot()
     def range_luminance_OnValueChanged(self):
-        #self.pupil.L =np.arange(10**self.range_luminance_cb_min.value(),np.power(10,self.range_luminance_cb_max.value()),0.01)
+        self.pupil.L =np.arange(10**self.range_luminance_cb_min.value(),np.power(10,self.range_luminance_cb_max.value()),0.001)
         self.updatePlot()
     def updatePlot(self):
-        #self._static_ax.plot(self.pupil.L,self.pupil.holladay(),color=(1,0,0),label="Holloday")
-        #self._static_ax.plot(self.pupil.L,self.pupil.moon_spancer(),color=(0,1,0),label="Moon Spancer")
-        #self._static_ax.plot(self.pupil.L,self.pupil.deGroot_gebhard(),color=(0,0,1),label="DeGroot Gebhard")
-        #self._static_ax.plot(self.pupil.L,self.pupil.stanley_davies(),color=(1,1,0),label="Stanley Davies")
-        #self._static_ax.plot(self.pupil.L,self.pupil.barten(),color=(0,1,1),label="Barten")
-        #self._static_ax.plot(self.pupil.L,self.pupil.blackie_howland(),color=(0.5,0.5,0),label="Blackie Howland")
-       # self._static_ax.plot(self.pupil.L,self.pupil.winn_whitaker_elliott_phillips(),color="blue")
-        #self._static_ax.plot(self.pupil.L,self.pupil.unified_formula(),color=(0,0,0),linestyle='--',label="Unified")
-        self._static_ax.plot(self.pupil.L,self.pupil.crawford(),color=(0.5,0.7,0.3),label="Crawford")
+        self._static_ax.clear()
+        self._static_ax.plot(self.luminance_range,self.pupil.holladay(self.luminance_range),color=(1,0,0),label="Holloday")
+        self._static_ax.plot(self.luminance_range,self.pupil.moon_spancer(self.luminance_range),color=(0,1,0),label="Moon Spancer")
+        self._static_ax.plot(self.luminance_range,self.pupil.deGroot_gebhard(self.luminance_range),color=(0,0,1),label="DeGroot Gebhard")
+        self._static_ax.plot(self.luminance_range,self.pupil.stanley_davies(self.luminance_range,self.pupil.a),color=(1,0.51,0),label="Stanley Davies")
+        self._static_ax.plot(self.luminance_range,self.pupil.barten(self.luminance_range),color=(0,1,1),label="Barten")
+        self._static_ax.plot(self.luminance_range,self.pupil.blackie_howland(self.luminance_range),color=(0.5,0.5,0),label="Blackie Howland")
+        #self._static_ax.plot(self.pupil.L,self.pupil.winn_whitaker_elliott_phillips(),color="blue")
+        self._static_ax.plot(self.luminance_range,self.pupil.unified_formula(self.luminance_range),color=(0,0,0),linestyle='--',label="Unified")
+        self._static_ax.plot(self.luminance_range,self.pupil.crawford(self.luminance_range),color=(0.5,0.7,0.3),label="Crawford")
         self._static_ax.legend(loc="upper right")
-        #self._static_ax.set_xticks([0.0001,0.01,1,100,10000],minor=True)
         self._static_ax.set_xscale('log')
-        self._static_ax.xaxis.set_major_locator(ticker.LogLocator(base=10,numticks=4))
-        self._static_ax.set_ylim(ymax=10)
-
-
-
-        #plt.plot(L,crawford(L),color="green",label="Crowford")
-        #plt.plot(L,moon_spancer(L),color="yellow",label="Moon Spancer")
-        #plt.plot(L,deGroot_gebhard(L),color="red",label="DeGrootGebhard")
-        #plt.plot(L,stanley_davies(L,25.4),color=(0.6,0.10,0.6),label="StanleyDavies")
-        #plt.plot(L,barten(L,10),color=(0.4,0.6,0.2),label="Barten")
-        #plt.plot(L,blackie_howland(L),color=(0.6,0.10,0.6),label="BlackieHowland")
-        #plt.plot(L,winn_whitaker_elliott_phillips(L,25),color=(0.6,0.10,0.6))
-        #plt.plot(L,unified_formula(L,a,y,y0,e),dashes=[10,10],color=(0,0,0),label="Unified")
-        #plt.legend(loc='upper right')
-        #plt.show()
-        
-
-    
-def show_GUI(pupil):
+        self._static_ax.xaxis.set_major_locator(ticker.LogLocator(base=10,numticks=5))
+        self._static_ax.yaxis.set_major_locator(ticker.MultipleLocator(base=1.0))
+        self._static_ax.set_ylim(ymax=10,ymin=0)
+        self._static_ax.set_xlim(xmax=10**4,xmin=10**-4) 
+        self._static_ax.figure.canvas.draw()
+        self._static_ax.set_ylabel('Diameter (mm)')
+        self._static_ax.set_xlabel(r'Luminance (cd $m^{-2}$)')
+def show_GUI(pupil,luminance_range):
     qapp = QtWidgets.QApplication(sys.argv)
-    app = ApplicationWindow(pupil)
+    app = ApplicationWindow(pupil,luminance_range)
     app.show()
     qapp.exec_()
