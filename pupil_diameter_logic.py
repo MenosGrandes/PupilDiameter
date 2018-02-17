@@ -17,13 +17,15 @@ class PupilDiameter_calculation:
     def holladay(self,L):
         return 7*np.exp(-0.1007*np.power(L,0.4))
     def crawford(self,L):
-        return np.float32(5-2.2*np.tanh(0.61151 +0.447*np.log10(L)))
+        return 5-2.2*np.tanh(0.61151 +0.447*np.log10(L))
     def moon_spancer(self,L):
         return 4.9 -3* np.tanh(0.4*np.log10(L))
     def deGroot_gebhard(self,L):
         return 7.175*np.exp(-0.00092*np.power(7.597 + np.log10(L),3))
     def stanley_davies(self,L,a):
-        return 7.75-5.75*(np.power(((L*a)/846),(0.41))/(np.power(((L*a)/846),(0.41))+2))
+        frac_1 = np.power(( (L*a)/846),0.41)
+        frac_2 = frac_1 + 2
+        return 7.75-5.75*(frac_1/frac_2)
     def barten(self,L):
         return 5 - 3 * np.tanh(0.4*np.log10((L*self.a)/np.power(40,2)))
     def blackie_howland(self,L):

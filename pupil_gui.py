@@ -26,6 +26,18 @@ from matplotlib.figure import Figure
 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
+from DoubleSlider import *
+#  
+# class UpdatePlotThread(QThread)
+#     def __init__(selfi,pupil):
+#         QThread.__init__(self)
+#         self.pupil=pupil
+#     def __del__(self):
+#         self.wait()
+#     def run(self)
+#         
+# 
+
 class ApplicationWindow(QtWidgets.QMainWindow):
     def __init__(self,pupil,luminance_range):
         super(ApplicationWindow, self).__init__()
@@ -39,12 +51,12 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.layout.addWidget(static_canvas)
         ''' Field Diameter Slider'''
         self.field_diameter_layout = QtWidgets.QHBoxLayout()
-        self.field_diameter_slider = QSlider(Qt.Horizontal)
+        self.field_diameter_slider = DoubleSlider(Qt.Horizontal)
         self.field_diameter_slider.setMaximum(60)
         self.field_diameter_slider.setMinimum(0.1)
         self.field_diameter_slider.setValue(10)
         self.field_diameter_slider.setTickPosition(QSlider.TicksBelow)
-        self.field_diameter_slider.setTickInterval(0.1)
+        self.field_diameter_slider.setTickInterval(1)
         self.field_diameter_label = QLabel()
         self.field_diameter_label.setText("Field diameter (deg)")
         self.field_diameter_label.setAlignment(Qt.AlignCenter)
@@ -55,7 +67,10 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.field_diameter_layout.addWidget(self.field_diameter_slider)
         self.field_diameter_layout.addWidget(self.field_diameter_value_label)
         self.layout.addLayout(self.field_diameter_layout)
+        self.field_diameter_slider.sliderReleased.connect(self.field_diameter_OnSliderReleased)
         self.field_diameter_slider.valueChanged.connect(self.field_diameter_OnValueChanged)
+
+
         '''Age Slider '''
         self.age_layout = QtWidgets.QHBoxLayout()
         self.age_slider = QSlider(Qt.Horizontal)
@@ -75,6 +90,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.age_layout.addWidget(self.age_value_label)
         self.layout.addLayout(self.age_layout)
         self.age_slider.valueChanged.connect(self.age_onValueChanged)
+        self.age_slider.sliderReleased.connect(self.age_onSliderReleased)
         '''Radio button eyes'''
         self.eyes_layout = QtWidgets.QHBoxLayout()
         self.eyes_layout.setAlignment(Qt.AlignCenter)
@@ -112,15 +128,17 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.addToolBar(NavigationToolbar(static_canvas, self))
         self._static_ax = static_canvas.figure.subplots()
         self.updatePlot()
-    def age_onValueChanged(self):
-        self.age_value_label.setText(str(self.age_slider.value()))
-        self.pupil.y=self.age_slider.value()
-        self.updatePlot()
-    def field_diameter_OnValueChanged(self):
-        self.field_diameter_value_label.setText(str(self.field_diameter_slider.value()))
+    def field_diameter_OnSliderReleased(self):
         self.pupil.a=self.field_diameter_slider.value()
         self.updatePlot()
-        print ("field diameter = " + str(self.pupil.a))
+    def field_diameter_OnValueChanged(self):
+        self.field_diameter_value_label.setText(str(round(self.field_diameter_slider.value(),2)))
+        #print ("field diameter = " + str(self.pupil.a))       
+    def age_onValueChanged(self):
+        self.age_value_label.setText(str(self.age_slider.value()))
+    def age_onSliderReleased(self):
+        self.pupil.y=self.age_slider.value()
+        self.updatePlot()
     def eyes_OnValueChanged(self,button):
         self.pupil.e = (int(button.text())) 
         self.updatePlot()
@@ -128,25 +146,28 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.pupil.L =np.arange(10**self.range_luminance_cb_min.value(),np.power(10,self.range_luminance_cb_max.value()),0.001)
         self.updatePlot()
     def updatePlot(self):
-        self._static_ax.clear()
-        self._static_ax.plot(self.luminance_range,self.pupil.holladay(self.luminance_range),color=(1,0,0),label="Holloday")
-        self._static_ax.plot(self.luminance_range,self.pupil.moon_spancer(self.luminance_range),color=(0,1,0),label="Moon Spancer")
-        self._static_ax.plot(self.luminance_range,self.pupil.deGroot_gebhard(self.luminance_range),color=(0,0,1),label="DeGroot Gebhard")
-        self._static_ax.plot(self.luminance_range,self.pupil.stanley_davies(self.luminance_range,self.pupil.a),color=(1,0.51,0),label="Stanley Davies")
-        self._static_ax.plot(self.luminance_range,self.pupil.barten(self.luminance_range),color=(0,1,1),label="Barten")
+        self._static_ax.cla()
+       
+       # self._static_ax.plot(self.luminance_range,self.pupil.holladay(self.luminance_range),color=(1,0,0),label="Holloday")
+      #  self._static_ax.plot(self.luminance_range,self.pupil.moon_spancer(self.luminance_range),color=(0,1,0),label="Moon Spancer")
+       # self._static_ax.plot(self.luminance_range,self.pupil.deGroot_gebhard(self.luminance_range),color=(0,0,1),label="DeGroot Gebhard")
+       # self._static_ax.plot(self.luminance_range,self.pupil.stanley_davies(self.luminance_range,self.pupil.a),color=(1,0.51,0),label="Stanley Davies")
+        #self._static_ax.plot(self.luminance_range,self.pupil.barten(self.luminance_range),color=(0,1,1),label="Barten")
         self._static_ax.plot(self.luminance_range,self.pupil.blackie_howland(self.luminance_range),color=(0.5,0.5,0),label="Blackie Howland")
-        #self._static_ax.plot(self.pupil.L,self.pupil.winn_whitaker_elliott_phillips(),color="blue")
-        self._static_ax.plot(self.luminance_range,self.pupil.unified_formula(self.luminance_range),color=(0,0,0),linestyle='--',label="Unified")
-        self._static_ax.plot(self.luminance_range,self.pupil.crawford(self.luminance_range),color=(0.5,0.7,0.3),label="Crawford")
+       # self._static_ax.plot(self.luminance_range,self.pupil.unified_formula(self.luminance_range),color=(0,0,0),linestyle='--',label="Unified")
+      #  self._static_ax.plot(self.luminance_range,self.pupil.crawford(self.luminance_range),color=(0.5,0.7,0.3),label="Crawford")
+        
         self._static_ax.legend(loc="upper right")
         self._static_ax.set_xscale('log')
         self._static_ax.xaxis.set_major_locator(ticker.LogLocator(base=10,numticks=5))
         self._static_ax.yaxis.set_major_locator(ticker.MultipleLocator(base=1.0))
         self._static_ax.set_ylim(ymax=10,ymin=0)
         self._static_ax.set_xlim(xmax=10**4,xmin=10**-4) 
-        self._static_ax.figure.canvas.draw()
         self._static_ax.set_ylabel('Diameter (mm)')
         self._static_ax.set_xlabel(r'Luminance (cd $m^{-2}$)')
+       
+        self._static_ax.figure.canvas.draw()
+
 def show_GUI(pupil,luminance_range):
     qapp = QtWidgets.QApplication(sys.argv)
     app = ApplicationWindow(pupil,luminance_range)
