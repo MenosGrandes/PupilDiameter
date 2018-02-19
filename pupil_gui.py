@@ -61,7 +61,8 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.field_diameter_label.setText("Field diameter (deg)")
         self.field_diameter_label.setAlignment(Qt.AlignCenter)
         self.field_diameter_value_label = QLabel()
-        self.field_diameter_value_label.setText(str(self.field_diameter_slider.value()))
+        text = "{:0.2f}".format(self.field_diameter_slider.value())
+        self.field_diameter_value_label.setText(text)#   str(self.field_diameter_slider.value()))
         self.field_diameter_value_label.setAlignment(Qt.AlignCenter)
         self.field_diameter_layout.addWidget(self.field_diameter_label)
         self.field_diameter_layout.addWidget(self.field_diameter_slider)
@@ -99,7 +100,6 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.eyes_one_radio_button = QRadioButton("1")
         self.eyes_two_radio_button = QRadioButton("2")
         self.eyes_one_radio_button.setChecked(True)
-     #   pupil.e=1;
         self.eyes_layout.addWidget(self.eyes_label)
         self.eyes_layout.addWidget(self.eyes_one_radio_button)
         self.eyes_layout.addWidget(self.eyes_two_radio_button) 
@@ -132,7 +132,8 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.pupil.a=self.field_diameter_slider.value()
         self.updatePlot()
     def field_diameter_OnValueChanged(self):
-        self.field_diameter_value_label.setText(str(round(self.field_diameter_slider.value(),2)))
+        text = "{:0.2f}".format(self.field_diameter_slider.value()) 
+        self.field_diameter_value_label.setText(text)
         #print ("field diameter = " + str(self.pupil.a))       
     def age_onValueChanged(self):
         self.age_value_label.setText(str(self.age_slider.value()))
@@ -140,10 +141,16 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.pupil.y=self.age_slider.value()
         self.updatePlot()
     def eyes_OnValueChanged(self,button):
-        self.pupil.e = (int(button.text())) 
+        if button.text() == "1" and button.isChecked() == True:
+            self.pupil.e = 1
+        elif button.text() == "2" and button.isChecked() == True:
+            self.pupil.e = 2
+            
+        #self.pupil.e = (int(button.text()))
+        #print '{}'.format(self.pupil.e)
         self.updatePlot()
     def range_luminance_OnValueChanged(self):
-        self.pupil.L =np.arange(10**self.range_luminance_cb_min.value(),np.power(10,self.range_luminance_cb_max.value()),0.001)
+        #self.pupil.L =np.arange(10**self.range_luminance_cb_min.value(),np.power(10,self.range_luminance_cb_max.value()),0.001)
         self.updatePlot()
     def updatePlot(self):
         self._static_ax.cla()
@@ -153,8 +160,8 @@ class ApplicationWindow(QtWidgets.QMainWindow):
        # self._static_ax.plot(self.luminance_range,self.pupil.deGroot_gebhard(self.luminance_range),color=(0,0,1),label="DeGroot Gebhard")
        # self._static_ax.plot(self.luminance_range,self.pupil.stanley_davies(self.luminance_range,self.pupil.a),color=(1,0.51,0),label="Stanley Davies")
         #self._static_ax.plot(self.luminance_range,self.pupil.barten(self.luminance_range),color=(0,1,1),label="Barten")
-        self._static_ax.plot(self.luminance_range,self.pupil.blackie_howland(self.luminance_range),color=(0.5,0.5,0),label="Blackie Howland")
-       # self._static_ax.plot(self.luminance_range,self.pupil.unified_formula(self.luminance_range),color=(0,0,0),linestyle='--',label="Unified")
+       # self._static_ax.plot(self.luminance_range,self.pupil.blackie_howland(self.luminance_range),color=(0.5,0.5,0),label="Blackie Howland")
+        self._static_ax.plot(self.luminance_range,self.pupil.unified_formula(self.luminance_range),color=(0,0,0),linestyle='--',label="Unified")
       #  self._static_ax.plot(self.luminance_range,self.pupil.crawford(self.luminance_range),color=(0.5,0.7,0.3),label="Crawford")
         
         self._static_ax.legend(loc="upper right")
