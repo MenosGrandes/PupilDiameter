@@ -138,7 +138,9 @@ class ApplicationWindow(QtWidgets.QMainWindow):
 
         self.addToolBar(NavigationToolbar(static_canvas, self))
         self._static_ax = static_canvas.figure.subplots()
+        
         self.updatePlot()
+
     def onAlgorithToogle(self,checkbox):
         checkBoxText = checkbox.text()
         for i ,algorithm in enumerate(self.algorith_names):
@@ -185,11 +187,17 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             self._static_ax.plot(self.luminance_range,self.pupil.unified_formula(self.luminance_range),color=(0,0,0),linestyle='--',label="Unified")
         if self.checkBoxStates[7]:
             self._static_ax.plot(self.luminance_range,self.pupil.crawford(self.luminance_range),color=(0.5,0.7,0.3),label="Crawford")
+        
+        ''' Age plots
+        self._static_ax.plot(self.luminance_range,self.pupil.winnIntercept(self.luminance_range),color=(0.24,0.33,0.7),label="WinnIntercept")
+        self._static_ax.plot(self.luminance_range,self.pupil.winnSlope(self.luminance_range),color=(0.5,0.8,0.1),label="WinnSlope")
+        self._static_ax.plot_surface(self.luminance_range,self.pupil.winn,np.arrange(0,80))    
+        '''
         self._static_ax.legend(loc="upper right")
         self._static_ax.set_xscale('log')
         self._static_ax.xaxis.set_major_locator(ticker.LogLocator(base=10,numticks=5))
         self._static_ax.yaxis.set_major_locator(ticker.MultipleLocator(base=1.0))
-        self._static_ax.set_ylim(ymax=10,ymin=0)
+        self._static_ax.set_ylim(ymax=10,ymin=1.7)
         self._static_ax.set_xlim(xmax=10**4,xmin=10**-4) 
         self._static_ax.set_ylabel('Diameter (mm)')
         self._static_ax.set_xlabel(r'Luminance (cd $m^{-2}$)')

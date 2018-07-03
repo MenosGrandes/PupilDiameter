@@ -34,7 +34,8 @@ class PupilDiameter_calculation:
         F = L * self.a *self.number_of_eyes()
         return self.stanley_davies(F,1) + (self.y-self.y0)*(0.02132 - 0.009562*self.stanley_davies(F,1))
         #return stanley_davies(L*number_of_eyes(e),a) + ageEffect(L,a,y,y0,e) 
-    ''' Helper functions'''
+    def winn(self,L):
+        return self.winnSlope(L)*self.y + self.winnIntercept(L)
     def number_of_eyes(self):
         if   self.e == 1: return 0.1
         elif self.e == 2: return 1
@@ -44,4 +45,16 @@ class PupilDiameter_calculation:
         if 20<=self.y<=83:
             return (self.y-self.y0)*self.ageSplop_unified(L,self.a,self.e)
         else:
-            print "Wrong y range. It must be between 20 and 83"
+            print ("Wrong y range. It must be between 20 and 83")
+    def winnSlope(self,L):
+        sTuple = [-0.024501, -0.0368073, 0.0210892,0.00281557]
+        Ws = 0
+        for i,s in enumerate(sTuple):
+            Ws= Ws + (s * np.power(np.log10( np.minimum(4400, np.maximum(9,L))),i))
+        return Ws
+    def winnIntercept(self,L):
+        bTuple = [6.9039,2.7765,-1.909,0.25599]
+        Wi = 0
+        for i,b in enumerate(bTuple):
+            Wi= Wi + (b * np.power(np.log10( np.minimum(4400, np.maximum(9,L))),i))
+        return Wi
