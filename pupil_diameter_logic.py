@@ -29,7 +29,7 @@ class PupilDiameter_calculation:
     def barten(self,L):
         return 5 - 3 * np.tanh(0.4*np.log10((L*self.a)/np.power(40,2)))
     def blackie_howland(self,L):
-        return np.float32(5.697 -0.658*np.log10(L)+0.07*np.power(np.log10(L),2))#Something is wrong!
+        return 5.697 - 0.658* np.log10(L) - 0.07 * np.log10(L)*2
     def unified_formula(self,L):
         F = L * self.a *self.number_of_eyes()
         return self.stanley_davies(F,1) + (self.y-self.y0)*(0.02132 - 0.009562*self.stanley_davies(F,1))

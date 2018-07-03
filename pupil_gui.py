@@ -1,14 +1,7 @@
-"""
-===============
-Embedding in Qt
-===============
-
-Simple Qt application embedding Matplotlib canvases.  This program will work
-equally well using Qt4 and Qt5.  Either version of Qt can be selected (for
-example) by setting the ``MPLBACKEND`` environment variable to "Qt4Agg" or
-"Qt5Agg", or by first importing the desired version of PyQt.
-"""
-
+'''
+Module responsible for GUI.
+I know it's awaful....
+'''
 import sys
 import time
 
@@ -27,16 +20,6 @@ from matplotlib.figure import Figure
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from DoubleSlider import *
-#  
-# class UpdatePlotThread(QThread)
-#     def __init__(selfi,pupil):
-#         QThread.__init__(self)
-#         self.pupil=pupil
-#     def __del__(self):
-#         self.wait()
-#     def run(self)
-#         
-# 
 
 class ApplicationWindow(QtWidgets.QMainWindow):
     def __init__(self,pupil,luminance_range):
@@ -120,13 +103,48 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.range_luminance_layout.addRow((QLabel("Minimum (log cd m-2)")),self.range_luminance_cb_min)
         self.range_luminance_layout.addRow((QLabel("Maximum (log cd m-2)")),self.range_luminance_cb_max)
         self.layout.addLayout(self.range_luminance_layout)
-        self.range_luminance_cb_max.valueChanged.connect(self.range_luminance_OnValueChanged)
+        '''self.range_luminance_cb_max.valueChanged.connect(self.range_luminance_OnValueChanged)
         self.range_luminance_cb_min.valueChanged.connect(self.range_luminance_OnValueChanged)
-
-
+    	'''
+        self.algorithm_layout_grid = QHBoxLayout()#QGridLayout()	
+        ''' Checkboxes for algorithm'''
+        self.algorith_names =[QCheckBox("Holladay",self),
+                              QCheckBox("MoonSpancer",self),
+                              QCheckBox("DeGroot Gebhard",self),
+                              QCheckBox("Stablay Davies",self),
+                              QCheckBox("Barten",self),
+                              QCheckBox("Blackie Howland",self),
+                              QCheckBox("Unified",self),
+                              QCheckBox("Crawford",self)
+                             ]
+        self.checkBoxStates =[False] * len(self.algorith_names)
+        self.algorith_names[0].stateChanged.connect(lambda:self.onAlgorithToogle(self.algorith_names[0]))
+        self.algorithm_layout_grid.addWidget(self.algorith_names[0])
+        self.algorith_names[1].stateChanged.connect(lambda:self.onAlgorithToogle(self.algorith_names[1]))
+        self.algorithm_layout_grid.addWidget(self.algorith_names[1])
+        self.algorith_names[2].stateChanged.connect(lambda:self.onAlgorithToogle(self.algorith_names[2]))
+        self.algorithm_layout_grid.addWidget(self.algorith_names[2])
+        self.algorith_names[3].stateChanged.connect(lambda:self.onAlgorithToogle(self.algorith_names[3]))
+        self.algorithm_layout_grid.addWidget(self.algorith_names[3])
+        self.algorith_names[4].stateChanged.connect(lambda:self.onAlgorithToogle(self.algorith_names[4]))
+        self.algorithm_layout_grid.addWidget(self.algorith_names[4])
+        self.algorith_names[5].stateChanged.connect(lambda:self.onAlgorithToogle(self.algorith_names[5]))
+        self.algorithm_layout_grid.addWidget(self.algorith_names[5])
+        self.algorith_names[6].stateChanged.connect(lambda:self.onAlgorithToogle(self.algorith_names[6]))
+        self.algorithm_layout_grid.addWidget(self.algorith_names[6])
+        self.algorith_names[7].stateChanged.connect(lambda:self.onAlgorithToogle(self.algorith_names[7]))
+        self.algorithm_layout_grid.addWidget(self.algorith_names[7])
+        self.layout.addLayout(self.algorithm_layout_grid)
 
         self.addToolBar(NavigationToolbar(static_canvas, self))
         self._static_ax = static_canvas.figure.subplots()
+        self.updatePlot()
+    def onAlgorithToogle(self,checkbox):
+        checkBoxText = checkbox.text()
+        for i ,algorithm in enumerate(self.algorith_names):
+            if algorithm.text() == checkBoxText:
+                self.checkBoxStates[i]=~self.checkBoxStates[i]
+                break
         self.updatePlot()
     def field_diameter_OnSliderReleased(self):
         self.pupil.a=self.field_diameter_slider.value()
@@ -134,7 +152,6 @@ class ApplicationWindow(QtWidgets.QMainWindow):
     def field_diameter_OnValueChanged(self):
         text = "{:0.2f}".format(self.field_diameter_slider.value()) 
         self.field_diameter_value_label.setText(text)
-        #print ("field diameter = " + str(self.pupil.a))       
     def age_onValueChanged(self):
         self.age_value_label.setText(str(self.age_slider.value()))
     def age_onSliderReleased(self):
@@ -145,25 +162,29 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             self.pupil.e = 1
         elif button.text() == "2" and button.isChecked() == True:
             self.pupil.e = 2
-            
-        #self.pupil.e = (int(button.text()))
-        #print '{}'.format(self.pupil.e)
         self.updatePlot()
-    def range_luminance_OnValueChanged(self):
+    '''def range_luminance_OnValueChanged(self):
         #self.pupil.L =np.arange(10**self.range_luminance_cb_min.value(),np.power(10,self.range_luminance_cb_max.value()),0.001)
         self.updatePlot()
+    '''
     def updatePlot(self):
         self._static_ax.cla()
-       
-       # self._static_ax.plot(self.luminance_range,self.pupil.holladay(self.luminance_range),color=(1,0,0),label="Holloday")
-      #  self._static_ax.plot(self.luminance_range,self.pupil.moon_spancer(self.luminance_range),color=(0,1,0),label="Moon Spancer")
-       # self._static_ax.plot(self.luminance_range,self.pupil.deGroot_gebhard(self.luminance_range),color=(0,0,1),label="DeGroot Gebhard")
-       # self._static_ax.plot(self.luminance_range,self.pupil.stanley_davies(self.luminance_range,self.pupil.a),color=(1,0.51,0),label="Stanley Davies")
-        #self._static_ax.plot(self.luminance_range,self.pupil.barten(self.luminance_range),color=(0,1,1),label="Barten")
-       # self._static_ax.plot(self.luminance_range,self.pupil.blackie_howland(self.luminance_range),color=(0.5,0.5,0),label="Blackie Howland")
-        self._static_ax.plot(self.luminance_range,self.pupil.unified_formula(self.luminance_range),color=(0,0,0),linestyle='--',label="Unified")
-      #  self._static_ax.plot(self.luminance_range,self.pupil.crawford(self.luminance_range),color=(0.5,0.7,0.3),label="Crawford")
-        
+        if self.checkBoxStates[0]:
+            self._static_ax.plot(self.luminance_range,self.pupil.holladay(self.luminance_range),color=(1,0,0),label="Holloday")
+        if self.checkBoxStates[1]:
+            self._static_ax.plot(self.luminance_range,self.pupil.moon_spancer(self.luminance_range),color=(0,1,0),label="MoonSpancer")
+        if self.checkBoxStates[2]:
+            self._static_ax.plot(self.luminance_range,self.pupil.deGroot_gebhard(self.luminance_range),color=(0,0,1),label="DeGroot Gebhard")
+        if self.checkBoxStates[3]:
+            self._static_ax.plot(self.luminance_range,self.pupil.stanley_davies(self.luminance_range,self.pupil.a),color=(1,0.51,0),label="Stanley Davies")
+        if self.checkBoxStates[4]:
+           self._static_ax.plot(self.luminance_range,self.pupil.barten(self.luminance_range),color=(0,1,1),label="Barten")
+        if self.checkBoxStates[5]:
+           self._static_ax.plot(self.luminance_range,self.pupil.blackie_howland(self.luminance_range),color=(0.5,0.5,0),label="Blackie Howland")
+        if self.checkBoxStates[6]:
+            self._static_ax.plot(self.luminance_range,self.pupil.unified_formula(self.luminance_range),color=(0,0,0),linestyle='--',label="Unified")
+        if self.checkBoxStates[7]:
+            self._static_ax.plot(self.luminance_range,self.pupil.crawford(self.luminance_range),color=(0.5,0.7,0.3),label="Crawford")
         self._static_ax.legend(loc="upper right")
         self._static_ax.set_xscale('log')
         self._static_ax.xaxis.set_major_locator(ticker.LogLocator(base=10,numticks=5))
@@ -172,7 +193,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self._static_ax.set_xlim(xmax=10**4,xmin=10**-4) 
         self._static_ax.set_ylabel('Diameter (mm)')
         self._static_ax.set_xlabel(r'Luminance (cd $m^{-2}$)')
-       
+        self._static_ax.grid()
         self._static_ax.figure.canvas.draw()
 
 def show_GUI(pupil,luminance_range):
