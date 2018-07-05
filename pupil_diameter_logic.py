@@ -23,15 +23,15 @@ class PupilDiameter_calculation:
     def deGroot_gebhard(self,L):
         return 7.175*np.exp(-0.00092*np.power(7.597 + np.log10(L),3))
     def stanley_davies(self,L,a):
-        frac_1 = np.power(( (L*a)/846),0.41)
+        frac_1 = np.power(( (L*(a**2))/846),0.41)
         frac_2 = frac_1 + 2
         return 7.75-5.75*(frac_1/frac_2)
     def barten(self,L):
-        return 5 - 3 * np.tanh(0.4*np.log10((L*self.a)/np.power(40,2)))
+        return 5 - 3 * np.tanh(0.4*np.log10((L*(self.a**2))/np.power(40,2)))
     def blackie_howland(self,L):
-        return 5.697 - 0.658* np.log10(L) - 0.07 * np.log10(L)*2
+        return 5.697 - 0.658* np.log10(L) - 0.07 * np.power(np.log10(L),2)
     def unified_formula(self,L):
-        F = L * self.a *self.number_of_eyes()
+        F = L * np.power(self.a,2) * self.number_of_eyes()
         return self.stanley_davies(F,1) + (self.y-self.y0)*(0.02132 - 0.009562*self.stanley_davies(F,1))
         #return stanley_davies(L*number_of_eyes(e),a) + ageEffect(L,a,y,y0,e) 
     def winn(self,L):
