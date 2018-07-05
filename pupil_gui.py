@@ -116,6 +116,8 @@ class ApplicationWindow(QtWidgets.QMainWindow):
                               QCheckBox("Blackie Howland",self),
                               QCheckBox("Unified",self),
                               QCheckBox("Crawford",self)
+                            #  QCheckBox("Winn",self)
+                             #      QCheckBox("Winn Age Slope",self)
                              ]
         for i in range(0,len(self.algorith_checkboxes)):
             self.algorithm_layout_grid.addWidget(self.algorith_checkboxes[i])
@@ -167,7 +169,11 @@ class ApplicationWindow(QtWidgets.QMainWindow):
             self._static_ax.plot(self.luminance_range,self.pupil.unified_formula(self.luminance_range),color=(0,0,0),linestyle='--',label="Unified")
         if self.algorith_checkboxes[7].isChecked():
             self._static_ax.plot(self.luminance_range,self.pupil.crawford(self.luminance_range),color=(0.5,0.7,0.3),label="Crawford")
-       
+        ''' if self.algorith_checkboxes[8].isChecked():
+            self._static_ax.plot(self.luminance_range,self.pupil.winn(self.luminance_range),color=(0.5,0.4,0.8),label="Winn")
+        if self.algorith_checkboxes[9].isChecked():
+            self._static_ax.plot(self.luminance_range,self.pupil.winnSlope(self.luminance_range),color=(0.2,0.4,0.1),label="WinnSlope")
+       '''
         ''' Age plots
         self._static_ax.plot(self.luminance_range,self.pupil.winnIntercept(self.luminance_range),color=(0.24,0.33,0.7),label="WinnIntercept")
         self._static_ax.plot(self.luminance_range,self.pupil.winnSlope(self.luminance_range),color=(0.5,0.8,0.1),label="WinnSlope")

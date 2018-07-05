@@ -48,9 +48,15 @@ class PupilDiameter_calculation:
             print ("Wrong y range. It must be between 20 and 83")
     def winnSlope(self,L):
         sTuple = [-0.024501, -0.0368073, 0.0210892,0.00281557]
-        Ws = 0
-        for i,s in enumerate(sTuple):
-            Ws= Ws + (s * np.power(np.log10( np.minimum(4400, np.maximum(9,L))),i))
+        Ws =[]
+        for j,l in enumerate(L):
+            Ws.append(0)
+            for i,s in enumerate(sTuple):
+                print ("l =%d, i=%d",l,i)
+                Ws[j]+= ( s* np.power(np.log10( np.minimum(4400, np.maximum(9,l))),i))
+                print Ws[j]
+        print "aaa"
+        print Ws
         return Ws
     def winnIntercept(self,L):
         bTuple = [6.9039,2.7765,-1.909,0.25599]
