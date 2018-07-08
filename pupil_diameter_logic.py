@@ -35,7 +35,11 @@ class PupilDiameter_calculation:
         return self.stanley_davies(F,1) + (self.y-self.y0)*(0.02132 - 0.009562*self.stanley_davies(F,1))
         #return stanley_davies(L*number_of_eyes(e),a) + ageEffect(L,a,y,y0,e) 
     def winn(self,L):
-        return self.winnSlope(L)*self.y + self.winnIntercept(L)
+        '''    iTuple = [6.9039,2.7765,-1.909,0.25599]
+        sTuple = [-0.024501, -0.0368073, 0.0210892,0.00281557]
+        intercept = [sum(s* np.log(min(4400,max(9,l)))**power*self.y+ i*np.log(min(4400,max(9,l)))**power for power, (s,i)  in enumerate(zip(sTuple,iTuple))) for l in L]
+        return intercept #(sum(s* (log(min(4400,max(9,L))))**power)*y+sum(b* (log(min(4400,max(9,L))))**power) ) 
+        '''
     def number_of_eyes(self):
         if   self.e == 1: return 0.1
         elif self.e == 2: return 1
@@ -46,21 +50,14 @@ class PupilDiameter_calculation:
             return (self.y-self.y0)*self.ageSplop_unified(L,self.a,self.e)
         else:
             print ("Wrong y range. It must be between 20 and 83")
-    def winnSlope(self,L):
-        sTuple = [-0.024501, -0.0368073, 0.0210892,0.00281557]
-        Ws =[]
-        for j,l in enumerate(L):
-            Ws.append(0)
-            for i,s in enumerate(sTuple):
-                print ("l =%d, i=%d",l,i)
-                Ws[j]+= ( s* np.power(np.log10( np.minimum(4400, np.maximum(9,l))),i))
-                print Ws[j]
-        print "aaa"
-        print Ws
+    def winnSlope(self,l):
+        Ws =0 
+        for i,tuple in enumerate(sTuple):
+            Ws+= tuple*np.power(np.log(min(4400,max(9,l))),i)
         return Ws
-    def winnIntercept(self,L):
-        bTuple = [6.9039,2.7765,-1.909,0.25599]
-        Wi = 0
-        for i,b in enumerate(bTuple):
-            Wi= Wi + (b * np.power(np.log10( np.minimum(4400, np.maximum(9,L))),i))
-        return Wi
+    def winnIntercept(self,l):
+        Ws =0 
+        for i,tuple in enumerate(bTuple):
+            Ws+= tuple*np.power(np.log(min(4400,max(9,l))),i)
+        return Ws
+ 
