@@ -4,7 +4,7 @@ I know it's awaful....
 '''
 import sys
 import time
-
+import itertools
 import numpy as np
 import matplotlib.ticker as ticker
 from matplotlib.backends.qt_compat import QtCore, QtWidgets, is_pyqt5
@@ -26,11 +26,11 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         super(ApplicationWindow, self).__init__()
         self._main = QtWidgets.QWidget()
         self.setCentralWidget(self._main)
-        self.resize(800,800)
+        self.resize(800,1000)
         self.layout = QtWidgets.QVBoxLayout(self._main)
         self.pupil = pupil
         self.luminance_range=luminance_range
-        static_canvas = FigureCanvas(Figure(figsize=(6.5, 5)))
+        static_canvas = FigureCanvas(Figure(figsize=(5.5, 7)))
         self.layout.addWidget(static_canvas)
         ''' Field Diameter Slider'''
         self.field_diameter_layout = QtWidgets.QHBoxLayout()
@@ -82,7 +82,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.eyes_label.setText("Eyes")
         self.eyes_one_radio_button = QRadioButton("1")
         self.eyes_two_radio_button = QRadioButton("2")
-        self.eyes_one_radio_button.setChecked(True)
+        self.eyes_two_radio_button.setChecked(True)
         self.eyes_layout.addWidget(self.eyes_label)
         self.eyes_layout.addWidget(self.eyes_one_radio_button)
         self.eyes_layout.addWidget(self.eyes_two_radio_button) 
@@ -136,9 +136,11 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.field_diameter_value_label.setText(text)
     def age_onValueChanged(self):
         self.age_value_label.setText(str(self.age_slider.value()))
+        
     def age_onSliderReleased(self):
         self.pupil.y=self.age_slider.value()
         self.updatePlot()
+        
     def eyes_OnValueChanged(self,button):
         if button.text() == "1" and button.isChecked() == True:
             self.pupil.e = 1
@@ -169,7 +171,14 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         if self.algorith_checkboxes[7].isChecked():
             self._static_ax.plot(self.luminance_range,self.pupil.crawford(self.luminance_range),color=(0.5,0.7,0.3),label="Crawford")
         
-        self._static_ax.legend(loc="upper right")
+        def flip(items, ncol):
+            return itertools.chain(*[items[i::ncol] for i in range(ncol)])
+            
+            
+        handles, labels = self._static_ax.get_legend_handles_labels()
+        handles = np.concatenate((handles[::2],handles[1::2]),axis=0)
+        labels = np.concatenate((labels[::2],labels[1::2]),axis=0)
+        self._static_ax.legend(flip(handles, 2), flip(labels, 2), loc=9, ncol=2)
         self._static_ax.set_xscale('log')
         self._static_ax.xaxis.set_major_locator(ticker.LogLocator(base=10,numticks=5))
         self._static_ax.yaxis.set_major_locator(ticker.MultipleLocator(base=1.0))
@@ -178,6 +187,7 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self._static_ax.set_ylabel('Diameter (mm)')
         self._static_ax.set_xlabel(r'Luminance (cd $m^{-2}$)')
         self._static_ax.grid()
+        #self._static_ax.figure.tight_layout();
         self._static_ax.figure.canvas.draw()
 
 def show_GUI(pupil,luminance_range):
